@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Official Winner Card | Education Point</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        :root { --primary: #14b8a6; --accent: #fbbf24; --bg: #020617; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: white; overflow-x: hidden; }
+        .font-heading { font-family: 'Space Grotesk', sans-serif; }
+        
+        .mesh-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 10% 20%, rgba(20, 184, 166, 0.1) 0%, transparent 40%),
+                        radial-gradient(circle at 90% 80%, rgba(251, 191, 36, 0.1) 0%, transparent 40%);
+            z-index: -1;
+        }
+
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        
+        #cert-capture { background: #0f172a; border: 8px solid #1e293b; padding: 35px; position: relative; width: 100%; max-width: 500px; margin: 0 auto; }
+        .cert-inner { border: 2px solid var(--accent); padding: 25px; }
+
+        .btn-gold { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: #000; font-weight: 900; }
+        .btn-gold:hover { transform: scale(1.03); box-shadow: 0 10px 25px -5px rgba(251, 191, 36, 0.4); }
+
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        .floating { animation: float 5s ease-in-out infinite; }
+
+        input::placeholder { color: rgba(255,255,255,0.3); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <div class="mesh-bg"></div>
+
+    <nav class="p-6 flex justify-between items-center max-w-5xl mx-auto w-full">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-teal-500 rounded-xl flex items-center justify-center shadow-lg"><i class="fas fa-graduation-cap text-black"></i></div>
+            <h1 class="font-heading text-lg tracking-tight">EDUCATION POINT</h1>
+        </div>
+        <p class="text-[9px] text-teal-500 font-bold uppercase tracking-widest">By Muhammad Rizwan</p>
+    </nav>
+
+    <main class="flex-1 flex flex-col items-center justify-center px-6 py-6 relative">
+        <div class="absolute top-10 right-10 text-yellow-500/10 text-8xl floating">🌙</div>
+
+        <div class="w-full max-w-xl z-10">
+            <div id="state-ready" class="text-center">
+                <h2 class="text-4xl md:text-6xl font-heading mb-6 leading-tight">Your Eid <br><span class="text-yellow-500 text-5xl md:text-7xl">Gift Awaits</span></h2>
+                <p class="text-gray-400 mb-10 text-sm max-w-xs mx-auto">Fill your details and claim your premium prize from Muhammad Rizwan.</p>
+                <div class="glass p-8 rounded-[40px]">
+                    <button onclick="openModal()" id="main-btn" class="w-full py-5 btn-gold rounded-2xl text-lg uppercase">Claim My Eidi 🎁</button>
+                </div>
+            </div>
+
+            <div id="state-result" class="hidden animate-in fade-in duration-700">
+                <div class="glass rounded-[40px] p-4 md:p-8">
+                    
+                    <div id="cert-capture" class="rounded-xl overflow-hidden shadow-2xl">
+                        <div class="cert-inner text-center">
+                            <p class="text-yellow-500 font-bold uppercase text-[8px] tracking-[0.3em] mb-2 italic underline">Official Reward Certificate</p>
+                            
+                            <div class="mb-4">
+                                <h2 id="display-name" class="text-2xl font-black text-teal-400 uppercase leading-none">-</h2>
+                                <p class="text-[9px] text-gray-400 mt-1 uppercase tracking-wider">
+                                    <span id="display-class">-</span> • <span id="display-city">-</span>
+                                </p>
+                            </div>
+
+                            <div class="w-10 h-0.5 bg-white/20 mx-auto mb-4"></div>
+                            
+                            <p class="text-gray-400 text-[9px] uppercase mb-1 tracking-widest">Has officially won:</p>
+                            <h4 id="prize-name" class="text-xl md:text-2xl font-black text-white mb-6 leading-tight uppercase px-2">...</h4>
+                            
+                            <div class="flex justify-between items-end mt-8">
+                                <div class="text-left">
+                                    <p class="text-[7px] text-gray-500 uppercase font-bold">Authorized By</p>
+                                    <p class="text-xs font-bold text-teal-400 border-b border-white/10">Muhammad Rizwan</p>
+                                </div>
+                                <div class="border-2 border-teal-500/30 text-teal-400 px-2 py-1 rounded text-[7px] font-bold rotate-[-12deg]">
+                                    VERIFIED <br> EP-2026
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="action-grid" class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button onclick="downloadCert()" class="py-4 bg-white/5 hover:bg-white/10 text-white font-bold rounded-2xl border border-white/10 flex items-center justify-center gap-2">
+                            <i class="fas fa-file-download"></i> Download Card
+                        </button>
+                        <a id="wa-claim" href="#" target="_blank" class="py-4 bg-green-600 hover:bg-green-700 text-white font-bold rounded-2xl flex items-center justify-center gap-2 shadow-lg">
+                            <i class="fab fa-whatsapp text-lg"></i> Claim on WhatsApp
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="user-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md hidden px-4">
+        <div class="glass p-8 rounded-[30px] w-full max-w-md border-teal-500/30">
+            <h3 class="text-2xl font-heading mb-2 text-teal-400">Winner Registration</h3>
+            <p class="text-gray-400 text-sm mb-6">Enter your details to generate your official Education Point certificate.</p>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="text-[10px] uppercase font-bold text-gray-500 ml-2">Full Name</label>
+                    <input type="text" id="user-name" placeholder="Enter your name" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:border-teal-500 outline-none transition text-white">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-[10px] uppercase font-bold text-gray-500 ml-2">Class/Post</label>
+                        <input type="text" id="user-class" placeholder="e.g. 10th Class" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:border-teal-500 outline-none transition text-white">
+                    </div>
+                    <div>
+                        <label class="text-[10px] uppercase font-bold text-gray-500 ml-2">City</label>
+                        <input type="text" id="user-city" placeholder="e.g. Multan" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:border-teal-500 outline-none transition text-white">
+                    </div>
+                </div>
+                
+                <button onclick="submitDetails()" class="w-full py-4 btn-gold rounded-xl mt-4 uppercase tracking-widest">Draw My Prize 🎁</button>
+                <button onclick="closeModal()" class="w-full py-2 text-gray-500 text-xs uppercase font-bold hover:text-white transition">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="p-8 text-center text-gray-700 text-[10px] tracking-[0.4em] uppercase font-bold">
+        © 2026 EDUCATION POINT | MUHAMMAD RIZWAN
+    </footer>
+
+    <script>
+        const prizes = [
+            "Digital Product Creation", "Ultimate PayPal Solution", "Google Ads Mastery", 
+            "Graphic Designing Pro", "WhatsApp Marketing Tools", "TikTok Crash Course", 
+            "Games Development Masterclass", "Video Editing Pro Pack", "Web Designing Course", 
+            "Smartphone Graphic Design", "Amazon Book Publishing", "AI Animation Masterclass",
+            "AI Portrait Secrets", "Seller Integration Pro", "Copywriting Cash Flow", 
+            "Digital Marketing Blueprint", "Chat GPT Cash Flow", "Video Editing Assets", 
+            "Animated Icons Pack", "Tom & Jerry Reels Bundle","CapCut Pro","Inshot Pro",
+            "Useful Website links","Basic Computer course","Free Movie App","Movie Box",
+            "2ND YEAR PREPARATION DRIVE","1ST YEAR ALL SUBJECT NOTES","10th Class Guess Papers"
+        ];
+        
+        const myNumber = "923314220506";
+
+        window.onload = () => {
+            const attempts = parseInt(localStorage.getItem('ep_attempts') || "0");
+            const savedWin = localStorage.getItem('ep_mega_2026');
+            
+            if(savedWin && attempts > 0) {
+                updateDisplayDetails();
+                renderResult(savedWin, false);
+                if(attempts === 1) addRetryButton();
+            }
+        };
+
+        function openModal() {
+            const attempts = parseInt(localStorage.getItem('ep_attempts') || "0");
+            if(attempts >= 2) return alert("You have already used your 2 chances!");
+            document.getElementById('user-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('user-modal').classList.add('hidden');
+        }
+
+        function submitDetails() {
+            const name = document.getElementById('user-name').value.trim();
+            const uClass = document.getElementById('user-class').value.trim();
+            const city = document.getElementById('user-city').value.trim();
+
+            if(!name || !uClass || !city) {
+                alert("Please fill in all fields to claim your gift!");
+                return;
+            }
+
+            localStorage.setItem('ep_user_name', name);
+            localStorage.setItem('ep_user_class', uClass);
+            localStorage.setItem('ep_user_city', city);
+            
+            closeModal();
+            handleDraw();
+        }
+
+        function handleDraw() {
+            const btn = document.getElementById('main-btn');
+            btn.disabled = true;
+            btn.innerText = "Selecting Reward...";
+
+            setTimeout(() => {
+                const winner = prizes[Math.floor(Math.random() * prizes.length)];
+                let attempts = parseInt(localStorage.getItem('ep_attempts') || "0");
+                attempts++;
+                
+                localStorage.setItem('ep_attempts', attempts);
+                localStorage.setItem('ep_mega_2026', winner);
+                
+                updateDisplayDetails();
+                renderResult(winner, true);
+                
+                if(attempts === 1) addRetryButton();
+            }, 1800);
+        }
+
+        function updateDisplayDetails() {
+            document.getElementById('display-name').innerText = localStorage.getItem('ep_user_name');
+            document.getElementById('display-class').innerText = localStorage.getItem('ep_user_class');
+            document.getElementById('display-city').innerText = localStorage.getItem('ep_user_city');
+        }
+
+        function renderResult(prize, isNew) {
+            document.getElementById('state-ready').classList.add('hidden');
+            document.getElementById('state-result').classList.remove('hidden');
+            document.getElementById('prize-name').innerText = prize;
+
+            const name = localStorage.getItem('ep_user_name');
+            const message = encodeURIComponent(`Assalam-o-Alaikum Rizwan Bhai! 🌙\n\nName: ${name}\nI just won "${prize}" from your Eid Giveaway.\n\nHere is my card! 🎁`);
+            document.getElementById('wa-claim').href = `https://wa.me/${myNumber}?text=${message}`;
+
+            if(isNew) {
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#14b8a6', '#fbbf24', '#ffffff'] });
+            }
+        }
+
+        function addRetryButton() {
+            if(document.getElementById('retry-btn')) return;
+            
+            const grid = document.getElementById('action-grid');
+            const retryBtn = document.createElement('button');
+            retryBtn.id = "retry-btn";
+            retryBtn.className = "col-span-full py-4 bg-teal-500/20 border border-teal-500/40 text-teal-400 font-bold rounded-2xl flex items-center justify-center gap-2 hover:bg-teal-500/30 transition-all";
+            retryBtn.innerHTML = `<i class="fas fa-redo"></i> Not Happy? Try Your Final Chance!`;
+            
+            retryBtn.onclick = () => {
+                document.getElementById('state-result').classList.add('hidden');
+                document.getElementById('state-ready').classList.remove('hidden');
+                const mainBtn = document.getElementById('main-btn');
+                mainBtn.disabled = false;
+                mainBtn.innerText = "Try My Final Chance 🎁";
+                retryBtn.remove();
+            };
+            
+            grid.appendChild(retryBtn);
+        }
+
+        function downloadCert() {
+            const cert = document.getElementById('cert-capture');
+            const name = localStorage.getItem('ep_user_name') || 'Winner';
+            
+            html2canvas(cert, { 
+                backgroundColor: "#0f172a", 
+                scale: 3,
+                logging: false,
+                useCORS: true 
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `${name}-Education-Point.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+    </script>
+</body>
+</html>
+
