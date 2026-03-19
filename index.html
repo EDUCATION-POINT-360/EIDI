@@ -1,273 +1,350 @@
-<!DOCTYPE html>
+ = `<i <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Official Winner Card | Education Point</title>
+    <title>Giveaway | Education Point Elite</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@400;700;900&family=Montserrat:wght@300;400;600;800&display=swap" rel="stylesheet">
 
     <style>
-        :root { --primary: #14b8a6; --accent: #fbbf24; --bg: #020617; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: white; overflow-x: hidden; }
-        .font-heading { font-family: 'Space Grotesk', sans-serif; }
-        
-        .mesh-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 10% 20%, rgba(20, 184, 166, 0.1) 0%, transparent 40%),
-                        radial-gradient(circle at 90% 80%, rgba(251, 191, 36, 0.1) 0%, transparent 40%);
-            z-index: -1;
+        :root {
+            --accent: #0071e3;
+            --accent-glow: rgba(0, 113, 227, 0.3);
+            --bg: #000000;
+            --card-bg: rgba(28, 28, 30, 0.7);
+            --gold: #d4af37;
         }
 
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        
-        #cert-capture { background: #0f172a; border: 8px solid #1e293b; padding: 35px; position: relative; width: 100%; max-width: 500px; margin: 0 auto; }
-        .cert-inner { border: 2px solid var(--accent); padding: 25px; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: white;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
 
-        .btn-gold { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: #000; font-weight: 900; }
-        .btn-gold:hover { transform: scale(1.03); box-shadow: 0 10px 25px -5px rgba(251, 191, 36, 0.4); }
+        .mesh-gradient {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-color: #000;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+            filter: blur(80px);
+            opacity: 0.6;
+        }
 
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-        .floating { animation: float 5s ease-in-out infinite; }
+        .glass {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-        input::placeholder { color: rgba(255,255,255,0.3); }
+        .btn-apple {
+            background: #ffffff;
+            color: #000;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+        }
+
+        .btn-apple:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px var(--accent-glow);
+            background: var(--accent);
+            color: white;
+        }
+
+        /* Official Certificate Styling */
+        #cert-canvas { 
+            width: 1000px; 
+            height: 700px; 
+            background: #ffffff; 
+            color: #1a1a1a;
+            padding: 40px;
+            position: relative;
+            box-sizing: border-box;
+            border: 25px solid #1a1a1a;
+        }
+
+        .cert-inner-border {
+            border: 2px solid var(--gold);
+            height: 100%;
+            width: 100%;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .cert-watermark {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 150px;
+            opacity: 0.03;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .float-anim { animation: float 4s ease-in-out infinite; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen">
 
-    <div class="mesh-bg"></div>
+    <div class="mesh-gradient"></div>
 
-    <nav class="p-6 flex justify-between items-center max-w-5xl mx-auto w-full">
+    <nav class="flex justify-between items-center px-8 py-6 max-w-6xl mx-auto w-full">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-teal-500 rounded-xl flex items-center justify-center shadow-lg"><i class="fas fa-graduation-cap text-black"></i></div>
-            <h1 class="font-heading text-lg tracking-tight">EDUCATION POINT</h1>
+            <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+                <i class="fas fa-bolt text-black text-sm"></i>
+            </div>
+            <span class="text-xl font-black tracking-tight">Education <span class="text-blue-500">Point Ai</span></span>
         </div>
-        <p class="text-[9px] text-teal-500 font-bold uppercase tracking-widest">By Muhammad Rizwan</p>
     </nav>
 
-    <main class="flex-1 flex flex-col items-center justify-center px-6 py-6 relative">
-        <div class="absolute top-10 right-10 text-yellow-500/10 text-8xl floating">🌙</div>
-
-        <div class="w-full max-w-xl z-10">
-            <div id="state-ready" class="text-center">
-                <h2 class="text-4xl md:text-6xl font-heading mb-6 leading-tight">Your Eid <br><span class="text-yellow-500 text-5xl md:text-7xl">Gift Awaits</span></h2>
-                <p class="text-gray-400 mb-10 text-sm max-w-xs mx-auto">Fill your details and claim your premium prize from Muhammad Rizwan.</p>
-                <div class="glass p-8 rounded-[40px]">
-                    <button onclick="openModal()" id="main-btn" class="w-full py-5 btn-gold rounded-2xl text-lg uppercase">Claim My Eidi 🎁</button>
-                </div>
+    <main class="max-w-4xl mx-auto px-6 py-12">
+        
+        <section id="setup-view" class="space-y-12">
+            <div class="text-center space-y-4">
+                <span class="px-4 py-1.5 rounded-full bg-blue-500/10 text-blue-400 text-xs font-bold tracking-widest uppercase border border-blue-500/20">Authorized Access Only</span>
+                <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-white leading-tight">Claim your EIDI <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">By Muhammad Rizwan.</span></h1>
             </div>
 
-            <div id="state-result" class="hidden animate-in fade-in duration-700">
-                <div class="glass rounded-[40px] p-4 md:p-8">
-                    
-                    <div id="cert-capture" class="rounded-xl overflow-hidden shadow-2xl">
-                        <div class="cert-inner text-center">
-                            <p class="text-yellow-500 font-bold uppercase text-[8px] tracking-[0.3em] mb-2 italic underline">Official Reward Certificate</p>
-                            
-                            <div class="mb-4">
-                                <h2 id="display-name" class="text-2xl font-black text-teal-400 uppercase leading-none">-</h2>
-                                <p class="text-[9px] text-gray-400 mt-1 uppercase tracking-wider">
-                                    <span id="display-class">-</span> • <span id="display-city">-</span>
-                                </p>
-                            </div>
+            <div class="glass p-8 md:p-12 rounded-[2.5rem] shadow-2xl">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="input-group md:col-span-2">
+                        <label class="text-[10px] uppercase font-black text-gray-400 ml-4 mb-2 block">Student Identity</label>
+                        <input type="text" id="user-name" placeholder="Full Name" class="w-full rounded-2xl p-4 text-white">
+                    </div>
+                    <div class="input-group">
+                        <label class="text-[10px] uppercase font-black text-gray-400 ml-4 mb-2 block">Class/Level</label>
+                        <input type="text" id="user-class" placeholder="e.g. 10th Grade" class="w-full rounded-2xl p-4 text-white">
+                    </div>
+                    <div class="input-group">
+                        <label class="text-[10px] uppercase font-black text-gray-400 ml-4 mb-2 block">Current City</label>
+                        <input type="text" id="user-city" placeholder="e.g. Lahore" class="w-full rounded-2xl p-4 text-white">
+                    </div>
+                    <button onclick="handleStart()" class="md:col-span-2 btn-apple h-16 rounded-2xl text-lg flex items-center justify-center gap-3 group">
+                        Initialize Vault <i class="fas fa-chevron-right text-sm transition-transform group-hover:translate-x-1"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
 
-                            <div class="w-10 h-0.5 bg-white/20 mx-auto mb-4"></div>
-                            
-                            <p class="text-gray-400 text-[9px] uppercase mb-1 tracking-widest">Has officially won:</p>
-                            <h4 id="prize-name" class="text-xl md:text-2xl font-black text-white mb-6 leading-tight uppercase px-2">...</h4>
-                            
-                            <div class="flex justify-between items-end mt-8">
-                                <div class="text-left">
-                                    <p class="text-[7px] text-gray-500 uppercase font-bold">Authorized By</p>
-                                    <p class="text-xs font-bold text-teal-400 border-b border-white/10">Muhammad Rizwan</p>
-                                </div>
-                                <div class="border-2 border-teal-500/30 text-teal-400 px-2 py-1 rounded text-[7px] font-bold rotate-[-12deg]">
-                                    VERIFIED <br> EP-2026
-                                </div>
-                            </div>
+        <section id="ai-view" class="hidden py-20 text-center">
+            <div class="relative w-32 h-32 mx-auto mb-10">
+                <div class="absolute inset-0 rounded-full border-4 border-white/5"></div>
+                <div class="absolute inset-0 rounded-full border-t-4 border-blue-500 animate-spin"></div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <i class="fas fa-fingerprint text-3xl text-blue-500 float-anim"></i>
+                </div>
+            </div>
+            <h2 id="ai-status" class="text-2xl font-medium tracking-tight animate-pulse">Synchronizing Data...</h2>
+        </section>
+
+        <section id="result-view" class="hidden">
+            <div class="glass rounded-[3rem] p-1 shadow-2xl overflow-hidden">
+                <div class="bg-white/5 rounded-[2.9rem] p-10 md:p-16 text-center">
+                    <div class="w-20 h-20 bg-green-500/20 text-green-500 rounded-3xl flex items-center justify-center mx-auto mb-8 text-3xl">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h2 class="text-sm font-black text-blue-400 uppercase tracking-[0.3em] mb-4">Grant Successful</h2>
+                    <h3 id="display-prize" class="text-4xl md:text-6xl font-bold text-white mb-12 tracking-tight">...</h3>
+                    
+                    <div class="flex flex-col md:flex-row gap-4 justify-center">
+                        <button onclick="downloadCert()" class="px-8 py-5 rounded-2xl bg-white/10 hover:bg-white/20 transition-all font-bold flex items-center justify-center gap-3">
+                            <i class="fas fa-award"></i> Certificate
+                        </button>
+                        <button onclick="revealLink()" id="reveal-btn" class="px-12 py-5 rounded-2xl btn-apple flex items-center justify-center gap-3">
+                            <i class="fas fa-unlock"></i> Reveal Cloud Link
+                        </button>
+                    </div>
+
+                    <div id="final-link-box" class="hidden mt-10 p-8 bg-blue-500/10 border border-blue-500/20 rounded-3xl">
+                        <p id="ai-msg" class="text-blue-200 text-sm mb-6"></p>
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <a id="drive-url" href="#" target="_blank" class="flex-grow py-4 bg-blue-600 text-white font-bold text-center rounded-xl hover:bg-blue-500">Open Resource</a>
+                            <button onclick="handleDismiss()" class="px-6 py-4 bg-white/5 rounded-xl text-xs font-bold uppercase hover:bg-white/10">Dismiss</button>
                         </div>
                     </div>
-
-                    <div id="action-grid" class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <button onclick="downloadCert()" class="py-4 bg-white/5 hover:bg-white/10 text-white font-bold rounded-2xl border border-white/10 flex items-center justify-center gap-2">
-                            <i class="fas fa-file-download"></i> Download Card
-                        </button>
-                        <a id="wa-claim" href="#" target="_blank" class="py-4 bg-green-600 hover:bg-green-700 text-white font-bold rounded-2xl flex items-center justify-center gap-2 shadow-lg">
-                            <i class="fab fa-whatsapp text-lg"></i> Claim on WhatsApp
-                        </a>
-                    </div>
                 </div>
             </div>
-        </div>
+        </section>
     </main>
 
-    <div id="user-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md hidden px-4">
-        <div class="glass p-8 rounded-[30px] w-full max-w-md border-teal-500/30">
-            <h3 class="text-2xl font-heading mb-2 text-teal-400">Winner Registration</h3>
-            <p class="text-gray-400 text-sm mb-6">Enter your details to generate your official Education Point certificate.</p>
-            
-            <div class="space-y-4">
-                <div>
-                    <label class="text-[10px] uppercase font-bold text-gray-500 ml-2">Full Name</label>
-                    <input type="text" id="user-name" placeholder="Enter your name" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:border-teal-500 outline-none transition text-white">
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="text-[10px] uppercase font-bold text-gray-500 ml-2">Class/Post</label>
-                        <input type="text" id="user-class" placeholder="e.g. 10th Class" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:border-teal-500 outline-none transition text-white">
-                    </div>
-                    <div>
-                        <label class="text-[10px] uppercase font-bold text-gray-500 ml-2">City</label>
-                        <input type="text" id="user-city" placeholder="e.g. Multan" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:border-teal-500 outline-none transition text-white">
-                    </div>
+    <div class="fixed left-[-9999px]">
+        <div id="cert-canvas">
+            <div class="cert-inner-border">
+                <div class="cert-watermark font-black">EP AI</div>
+                
+                <div class="mb-6">
+                    <i class="fas fa-award text-5xl text-[#d4af37]"></i>
                 </div>
                 
-                <button onclick="submitDetails()" class="w-full py-4 btn-gold rounded-xl mt-4 uppercase tracking-widest">Draw My Prize 🎁</button>
-                <button onclick="closeModal()" class="w-full py-2 text-gray-500 text-xs uppercase font-bold hover:text-white transition">Cancel</button>
+                <h4 style="font-family: 'Montserrat'; font-weight: 800; letter-spacing: 5px; color: #1a1a1a;" class="uppercase text-sm mb-2">Certificate of Achievement</h4>
+                <div style="width: 60px; height: 2px; background: #d4af37;" class="mb-10"></div>
+                
+                <p style="font-family: 'Inter';" class="text-gray-500 text-lg mb-2">This is to officially recognize</p>
+                <h1 id="c-user" style="font-family: 'Cinzel'; color: #1a1a1a;" class="text-6xl mb-4">...</h1>
+                
+                <p style="font-family: 'Inter';" class="text-gray-500 text-lg max-w-2xl mx-auto mb-10">
+                    For their enrollment at <b>Education Point AI</b>. This student has been granted exclusive digital access to the premium educational asset:
+                </p>
+                
+                <h2 id="c-prize" style="font-family: 'Montserrat'; font-weight: 700; color: #0071e3;" class="text-3xl italic mb-12">...</h2>
+                
+                <div class="w-full mt-auto flex justify-between items-end px-10">
+                    <div class="text-left">
+                        <div style="width: 150px; height: 1px; background: #1a1a1a;" class="mb-2"></div>
+                        <p class="font-bold text-sm uppercase">Muhammad Rizwan</p>
+                        <p class="text-[10px] text-gray-400 uppercase">Director, Education Point</p>
+                    </div>
+                    
+                    <div class="text-center bg-gray-50 p-4 border border-gray-200">
+                        <p id="c-meta" class="text-[10px] font-mono text-gray-400 uppercase">...</p>
+                        <p class="text-[10px] font-mono mt-1">Ref ID: EP-2026-VAULT</p>
+                    </div>
+
+                    <div class="text-right">
+                        <div style="width: 150px; height: 1px; background: #1a1a1a;" class="mb-2"></div>
+                        <p class="font-bold text-sm uppercase">Authorized</p>
+                        <p class="text-[10px] text-gray-400 uppercase">Digital Asset Vault Node</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <footer class="p-8 text-center text-gray-700 text-[10px] tracking-[0.4em] uppercase font-bold">
-        © 2026 EDUCATION POINT | MUHAMMAD RIZWAN
-    </footer>
-
     <script>
-        const prizes = [
-            "Digital Product Creation", "Ultimate PayPal Solution", "Google Ads Mastery", 
-            "Graphic Designing Pro", "WhatsApp Marketing Tools", "TikTok Crash Course", 
-            "Games Development Masterclass", "Video Editing Pro Pack", "Web Designing Course", 
-            "Smartphone Graphic Design", "Amazon Book Publishing", "AI Animation Masterclass",
-            "AI Portrait Secrets", "Seller Integration Pro", "Copywriting Cash Flow", 
-            "Digital Marketing Blueprint", "Chat GPT Cash Flow", "Video Editing Assets", 
-            "Animated Icons Pack", "Tom & Jerry Reels Bundle","CapCut Pro","Inshot Pro",
-            "Useful Website links","Basic Computer course","Free Movie App","Movie Box",
-            
+        const PRIZE_DB = [
+            { name: "Trading Bootcamp (Badar Tanveer)", url: "https://drive.google.com/drive/folders/1lXWas1_1vRbH3u3PoUYse1MtsE0nXQWq" },
+            { name: "Ghulam Ali SEO Mastery (2025)", url: "https://drive.google.com/drive/folders/1iK_lfYZB3TV52ARr6Ts2sKiNqDLYEuEk" },
+            { name: "Capcut Editing (Muhammad Saqib)", url: "https://drive.google.com/drive/folders/1ueqslfmEDlUAxhGh7hCGZzaRr51nc9IW" },
+            { name: "Content Creation (Prof Nasir)", url: "https://drive.google.com/drive/folders/1PTp2KFDLfs-pUpO8oWRseCNgFxyB5WqO" },
+            { name: "YouTube Professional (Al Suffa)", url: "https://drive.google.com/drive/folders/1jLOAD0uprK6ZjBrTKFqdRvKFnDnWSiiO" },
+            { name: "Safeer Shah YouTube Course", url: "https://drive.google.com/drive/folders/1KkFBJ1P20a9bbwunEvAaLKPCyv9sAj0x" },
+            { name: "Islamic YouTube Content", url: "https://drive.google.com/drive/folders/17obWxcod6DJ9L8lsQ5_zr0S6ZWA0Epup" },
+            { name: "YouTube Copyright (Umair)", url: "https://drive.google.com/drive/folders/10RDUrJFsAOWGZuM6jt8emKCKtsoJWFho" },
+            { name: "YouTube 18 Days Formula", url: "https://docs.google.com/document/d/1iot-fAHzGta4WKSI6VCO0v_3rhyuswHgYZ1I4153Q70/edit" },
+            { name: "Mobile Editing Basic to Advanced", url: "https://drive.google.com/drive/folders/1bb_FbCjOlA2vduBYLlthP3H5meYDK6_f" },
+            { name: "Editing Bundle All-In-One", url: "https://drive.google.com/drive/folders/14ufVZR5url_roKNawE5YamKcutjFdwoS" },
+            { name: "Moiz Awan Thumbnail Mastery", url: "https://drive.google.com/drive/folders/1dYMcpYlhCGVi1oedC3z2tDMa2xnQ-tQD" },
+            { name: "Faheem Jamil Thumbnail Course", url: "https://drive.google.com/drive/folders/1H-qFsqoLBn-OpOkw1QBUd-JQYAogK1UI" },
+            { name: "Script Writing Expert Formula", url: "https://drive.google.com/drive/folders/1-laNPkdtJMusSUBoQCG_ILSmd3KEvSB6" },
+            { name: "Script Writing Basic to Advance", url: "https://drive.google.com/drive/folders/1LZtMkUoVlZ-3qSLDDcUbN4xOHkHMmwQn" },
+            { name: "1000+ Premium Sigma Bundle", url: "https://drive.google.com/drive/folders/1qIXT2P98zMsErtZ_SiZUy3mxAzLkx26P" },
+            { name: "Digital Product Creation", url: "https://drive.google.com/drive/folders/1QLq5liqvVd5m9NXH-XB69DmRE4wsjPel" },
+            { name: "Web Design (Fakeer Tech)", url: "https://drive.google.com/drive/folders/1Qeg14KlmZU9AqLtRHj1IJ7sgIj8InHgV" },
+            { name: "WordPress Web Development", url: "https://drive.google.com/drive/folders/1XcEgh9oBsbED1PpagBeQawNpjxeLBqMI" },
+            { name: "Ecommerce WordPress Pro", url: "https://drive.google.com/drive/folders/1Ncyk9OyXa-VdXbZpnQatkOvrVoL9RmrM" },
+            { name: "Bootstrap Mastery", url: "https://drive.google.com/drive/folders/1YrJkWGIqzN8xwCJ7hYlXExMZ0iTnt-Pv" },
+            { name: "Theme Development", url: "https://drive.google.com/drive/folders/16mu5RWsq_DgA6SXsETMLToGMgsbyF5An" },
+            { name: "Landing Page Course", url: "https://drive.google.com/drive/folders/1lHH4wyviTbgkVq_Y3oCEg4ew4LEHo83_" },
+            { name: "IOS App Development", url: "https://drive.google.com/drive/folders/1e99aacIzFs7Fkn0Jts0Z3Md_KrOK7yTC" },
+            { name: "Game Development Mastery", url: "https://drive.google.com/drive/folders/1JfHfF_WV4Rhcpp1fIacEromMVLi89o3E" },
+            { name: "Photoshop Mastery", url: "https://drive.google.com/drive/folders/18m82NNRlX-NuYwjBF0u7n5ZVAa4C0eA" },
+            { name: "Mobile Editing Zero to Hero", url: "https://drive.google.com/drive/folders/15Ej5t_G15O4yH7d6EnONU8NJTZGH6amB" },
+            { name: "After Effects 4K CC Pack", url: "https://drive.google.com/drive/folders/19mHnTAfyfncPADADAUpbebsxjJ849Q2F" },
+            { name: "MovieBox Premium APK", url: "https://www.mediafire.com/file/k7s4940t8pv4p7l/MOVIE-BOX-PREMIUM-BY-SHEHRYAR.APK/file" },
+            { name: "InShot Pro Unlocked", url: "https://liteapks.com/download/inshot-pro-3-107/1" },
+            { name: "CapCut Pro Video Editor", url: "https://liteapks.com/download/capcut-video-editor-311/1" },
+            { name: "Free Movie Streaming App", url: "https://drive.google.com/file/d/1PTbR3iLR3jcPh4ux6Wu3xt40nRIS47-g/" },
+            { name: "25+ AI Tools Masterclass", url: "https://drive.google.com/drive/folders/129bWYrdrW3JdEjEpqXgRwK0NrhXOaawI" },
+            { name: "Animated Icons Collection", url: "https://drive.google.com/file/d/1zZPVe6ypx7LpBPgdr1pCkFBpp3ZkGgG0/" },
+            { name: "Tom & Jerry Reels Bundle", url: "https://drive.google.com/drive/folders/1VWUHqj2aWJZKiyFj51rC3CDPa6s3BzJs" },
+            { name: "TikTok Crash Course", url: "https://drive.google.com/file/d/1sqVF_RL8ZtV5l4KwdkBiE7JixBGvDNZ6/" },
+            { name: "Copywriting Cash Flow", url: "https://drive.google.com/drive/folders/1VR9RlNotOXZNRP8WqfVVZJzkk2nHXZG9" },
+            { name: "WhatsApp Marketing Tools", url: "https://drive.google.com/file/d/1KZfwOIWsiBPt1Z9oDCdE-FbB9bMRkhfy/view" },
+            { name: "Amazon Book Publishing", url: "https://drive.google.com/drive/folders/1UuW0yEnvc6THT8DuOokzaqLo9JO7Q5UU" },
+            { name: "Chat GPT Cash Flow", url: "https://drive.google.com/file/d/1bv8hiddtrHnZwyunMezqfqb3LpFYcSrz/view" },
+            { name: "Ultimate PayPal Solution", url: "https://drive.google.com/file/d/1u44LO0h7o7BJKmhbBeUgfGbfq2X9gfKr/view" },
+            { name: "Google Ads Mastery", url: "https://drive.google.com/drive/folders/14ss-gDN2XwaC9hOPR4urPf4-7JFFDQki" },
+            { name: "1st Year Preparation Notes", url: "https://drive.google.com/drive/folders/101s5RWpVUaR80mijnuouHtWsVnGVK_y8" },
+            { name: "2nd Year Preparation Drive", url: "https://drive.google.com/drive/folders/101s5RWpVUaR80mijnuouHtWsVnGVK_y8" }
         ];
-        
-        const myNumber = "923314220506";
 
-        window.onload = () => {
-            const attempts = parseInt(localStorage.getItem('ep_attempts') || "0");
-            const savedWin = localStorage.getItem('ep_mega_2026');
+        let selected = null;
+
+        function handleStart() {
+            const n = document.getElementById('user-name').value;
+            if(n.length < 3) { alert("Please provide full name."); return; }
+            document.getElementById('setup-view').classList.add('hidden');
+            startScanning();
+        }
+
+        function startScanning() {
+            document.getElementById('ai-view').classList.remove('hidden');
+            const steps = ["Securing Neural Link", "Validating ID", "Parsing Vault", "Ready to Grant"];
+            let i = 0;
+            const timer = setInterval(() => {
+                document.getElementById('ai-status').innerText = steps[i] + "...";
+                if(++i >= steps.length) { clearInterval(timer); showResult(); }
+            }, 700);
+        }
+
+        function showResult() {
+            selected = PRIZE_DB[Math.floor(Math.random() * PRIZE_DB.length)];
             
-            if(savedWin && attempts > 0) {
-                updateDisplayDetails();
-                renderResult(savedWin, false);
-                if(attempts === 1) addRetryButton();
-            }
-        };
-
-        function openModal() {
-            const attempts = parseInt(localStorage.getItem('ep_attempts') || "0");
-            if(attempts >= 2) return alert("You have already used your 2 chances!");
-            document.getElementById('user-modal').classList.remove('hidden');
-        }
-
-        function closeModal() {
-            document.getElementById('user-modal').classList.add('hidden');
-        }
-
-        function submitDetails() {
-            const name = document.getElementById('user-name').value.trim();
-            const uClass = document.getElementById('user-class').value.trim();
-            const city = document.getElementById('user-city').value.trim();
-
-            if(!name || !uClass || !city) {
-                alert("Please fill in all fields to claim your gift!");
-                return;
-            }
-
-            localStorage.setItem('ep_user_name', name);
-            localStorage.setItem('ep_user_class', uClass);
-            localStorage.setItem('ep_user_city', city);
+            // Populate Pro Certificate
+            document.getElementById('c-user').innerText = document.getElementById('user-name').value;
+            document.getElementById('c-meta').innerText = `${document.getElementById('user-class').value} | ${document.getElementById('user-city').value}`;
+            document.getElementById('c-prize').innerText = selected.name;
             
-            closeModal();
-            handleDraw();
+            // Show result
+            document.getElementById('display-prize').innerText = selected.name;
+            document.getElementById('ai-view').classList.add('hidden');
+            document.getElementById('result-view').classList.remove('hidden');
+            
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
         }
 
-        function handleDraw() {
-            const btn = document.getElementById('main-btn');
-            btn.disabled = true;
-            btn.innerText = "Selecting Reward...";
-
+        function revealLink() {
+            const btn = document.getElementById('reveal-btn');
+            btn.innerHTML = `<i class="fas fa-spinner animate-spin"></i> Authenticating...`;
             setTimeout(() => {
-                const winner = prizes[Math.floor(Math.random() * prizes.length)];
-                let attempts = parseInt(localStorage.getItem('ep_attempts') || "0");
-                attempts++;
-                
-                localStorage.setItem('ep_attempts', attempts);
-                localStorage.setItem('ep_mega_2026', winner);
-                
-                updateDisplayDetails();
-                renderResult(winner, true);
-                
-                if(attempts === 1) addRetryButton();
-            }, 1800);
+                document.getElementById('ai-msg').innerText = `Authorized access granted for "${selected.name}". Link active for current session.`;
+                document.getElementById('drive-url').href = selected.url;
+                document.getElementById('final-link-box').classList.remove('hidden');
+                btn.innerHTML = `<i class="fas fa-lock-open"></i> Access Granted`;
+                btn.classList.add('opacity-50', 'pointer-events-none');
+            }, 1200);
         }
 
-        function updateDisplayDetails() {
-            document.getElementById('display-name').innerText = localStorage.getItem('ep_user_name');
-            document.getElementById('display-class').innerText = localStorage.getItem('ep_user_class');
-            document.getElementById('display-city').innerText = localStorage.getItem('ep_user_city');
-        }
-
-        function renderResult(prize, isNew) {
-            document.getElementById('state-ready').classList.add('hidden');
-            document.getElementById('state-result').classList.remove('hidden');
-            document.getElementById('prize-name').innerText = prize;
-
-            const name = localStorage.getItem('ep_user_name');
-            const message = encodeURIComponent(`Assalam-o-Alaikum Rizwan Bhai! 🌙\n\nName: ${name}\nI just won "${prize}" from your Eid Giveaway.\n\nHere is my card! 🎁`);
-            document.getElementById('wa-claim').href = `https://wa.me/${myNumber}?text=${message}`;
-
-            if(isNew) {
-                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#14b8a6', '#fbbf24', '#ffffff'] });
-            }
-        }
-
-        function addRetryButton() {
-            if(document.getElementById('retry-btn')) return;
-            
-            const grid = document.getElementById('action-grid');
-            const retryBtn = document.createElement('button');
-            retryBtn.id = "retry-btn";
-            retryBtn.className = "col-span-full py-4 bg-teal-500/20 border border-teal-500/40 text-teal-400 font-bold rounded-2xl flex items-center justify-center gap-2 hover:bg-teal-500/30 transition-all";
-            retryBtn.innerHTML = `<i class="fas fa-redo"></i> Not Happy? Try Your Final Chance!`;
-            
-            retryBtn.onclick = () => {
-                document.getElementById('state-result').classList.add('hidden');
-                document.getElementById('state-ready').classList.remove('hidden');
-                const mainBtn = document.getElementById('main-btn');
-                mainBtn.disabled = false;
-                mainBtn.innerText = "Try My Final Chance 🎁";
-                retryBtn.remove();
-            };
-            
-            grid.appendChild(retryBtn);
+  function handleDismiss() {
+            document.getElementById('result-view').classList.add('hidden');
+            document.getElementById('final-link-box').classList.add('hidden');
+            const rb = document.getElementById('reveal-btn');
+            rb.innerHTML = `<i class="fas fa-unlock"></i> Reveal Cloud Link`;
+            rb.classList.remove('opacity-50', 'pointer-events-none');
+            startScanning();
         }
 
         function downloadCert() {
-            const cert = document.getElementById('cert-capture');
-            const name = localStorage.getItem('ep_user_name') || 'Winner';
-            
-            html2canvas(cert, { 
-                backgroundColor: "#0f172a", 
-                scale: 3,
-                logging: false,
-                useCORS: true 
-            }).then(canvas => {
+            const btn = event.currentTarget;
+            btn.innerHTML = '<i class="fas fa-spinner animate-spin"></i> Generating PDF...';
+            html2canvas(document.getElementById('cert-canvas'), { scale: 2 }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = `${name}-Education-Point.png`;
+                link.download = `EducationPoint-Cert-${Date.now()}.png`;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
+                btn.innerHTML = '<i class="fas fa-award"></i> Certificate Saved';
             });
         }
     </script>
 </body>
 </html>
-
